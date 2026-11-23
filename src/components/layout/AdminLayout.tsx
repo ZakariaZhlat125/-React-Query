@@ -75,7 +75,7 @@ export default function AdminLayout() {
           <div className="flex items-center gap-3">
             {user && (
               <>
-                <span className="text-sm">{user.name}</span>
+                {/* <span className="text-sm">{user.name}</span> */}
                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${ROLE_BADGE[user.role]}`}>
                   {user.role}
                 </span>
