@@ -1,29 +1,25 @@
 import { useState, type FormEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { DEMO_ACCOUNTS, fakeLogin } from '../lib/auth/fakeAuthApi';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { loginWithCredentials } from '../lib/auth/authApi';
+import { DEMO_ACCOUNTS } from '../lib/auth/fakeAuthApi';
 import { setTokens } from '../lib/auth/tokens';
 import { useAuthStore } from '../store/authStore';
 
-// Login flow:
-// credentials → POST /auth/login → { access_token, refresh_token, user }
-// → save tokens → update auth store → redirect to the page the user wanted
 export default function Login() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const login = useAuthStore((s) => s.login);
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const loginMutation = useMutation({
-    mutationFn: fakeLogin,
+    mutationFn: loginWithCredentials,
     onSuccess: (data) => {
       setTokens(data.access_token, data.refresh_token);
       login(data.user);
-      navigate(from, { replace: true });
+      navigate('/dashboard');
     },
   });
 

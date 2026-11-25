@@ -7,6 +7,7 @@ import { QUERY_KEYS } from '../../lib/queryKeys';
 export default function CreateUserForm({ onMessage }: { onMessage: (msg: string) => void }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const queryClient = useQueryClient();
 
   const createUserMutation = useMutation({
@@ -15,6 +16,7 @@ export default function CreateUserForm({ onMessage }: { onMessage: (msg: string)
       onMessage(`POST /users → created "${user.name}" with id ${user.id}. (Fake API: the refetched list won't change.)`);
       setName('');
       setEmail('');
+      setPassword("");
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.users });
     },
     onError: (err) => onMessage(`❌ ${err.message}`),
@@ -22,8 +24,8 @@ export default function CreateUserForm({ onMessage }: { onMessage: (msg: string)
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
-    createUserMutation.mutate({ name: name.trim(), email: email.trim() });
+    if (!name.trim() || !email.trim() || !password.trim()) return;
+    createUserMutation.mutate({ name: name.trim(), email: email.trim() , password:password.trim() });
   };
 
   return (
@@ -39,6 +41,13 @@ export default function CreateUserForm({ onMessage }: { onMessage: (msg: string)
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
         type="email"
+        className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+      />
+      <input
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="password"
+        type="password"
         className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
       />
       <button

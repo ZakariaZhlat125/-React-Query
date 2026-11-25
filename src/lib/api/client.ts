@@ -4,7 +4,7 @@ import { clearTokens, getAccessToken, setTokens } from '../auth/tokens';
 import { useAuthStore } from '../../store/authStore';
 import { queryClient } from '../queryClient';
 
-export const API_URL: string = import.meta.env.VITE_API_URL ?? 'https://jsonplaceholder.typicode.com';
+export const API_URL: string = import.meta.env.VITE_API_URL;
 
 // API layer = the only place that knows about HTTP, tokens and global errors.
 export const api = axios.create({

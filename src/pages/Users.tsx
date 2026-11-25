@@ -37,7 +37,7 @@ export default function Users() {
   // Exercise 4: useMemo → filter + sort only when users or search change
   const visibleUsers = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return (users ?? [])
+    return (users?.data ?? [])
       .filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [users, search]);
@@ -80,25 +80,25 @@ export default function Users() {
             <tr>
               <th className="px-4 py-2 font-medium">Name</th>
               <th className="px-4 py-2 font-medium">Email</th>
-              <th className="px-4 py-2 font-medium">City</th>
+              {/* <th className="px-4 py-2 font-medium">City</th> */}
               <th className="px-4 py-2 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {visibleUsers.map((u) => (
-              <tr key={u.id}>
+              <tr key={u._id}>
                 <td className="px-4 py-2">
                   <Link to={`/users/${u.id}`} className="font-medium text-indigo-600 hover:underline">
                     {u.name}
                   </Link>
                 </td>
                 <td className="px-4 py-2 text-slate-600">{u.email}</td>
-                <td className="px-4 py-2 text-slate-600">{u.address.city}</td>
+                {/* <td className="px-4 py-2 text-slate-600">{u.address.city}</td> */}
                 <td className="px-4 py-2">
                   <DeleteUserButton
-                    userId={u.id}
+                    userId={u._id}
                     onDelete={(id) => deleteMutation.mutate(id)}
-                    isDeleting={deleteMutation.isPending && deleteMutation.variables === u.id}
+                    isDeleting={deleteMutation.isPending && deleteMutation.variables === u._id}
                   />
                 </td>
               </tr>

@@ -28,8 +28,7 @@ export default function PostsList() {
       </div>
       <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
         {posts?.map((p) => (
-          <li key={p.id} className="px-4 py-2.5 text-sm">
-            <span className="mr-2 text-slate-400">#{p.id}</span>
+          <li key={p._id} className="px-4 py-2.5 text-sm">
             {p.title}
           </li>
         ))}

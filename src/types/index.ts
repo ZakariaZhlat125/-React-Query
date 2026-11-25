@@ -22,7 +22,6 @@ export interface LoginResponse {
 }
 
 // ---------- Server data (server state → React Query) ----------
-// Shapes returned by https://jsonplaceholder.typicode.com
 export interface User {
   id: number;
   name: string;
@@ -40,10 +39,11 @@ export interface CreateUserInput {
 }
 
 export interface Post {
-  id: number;
-  userId: number;
+  _id: string;
   title: string;
-  body: string;
+  author: { _id: string; name: string; email: string } | null;
+  tags: string[];
+  comments: { text: string; name?: string }[];
 }
 
 export interface Todo {

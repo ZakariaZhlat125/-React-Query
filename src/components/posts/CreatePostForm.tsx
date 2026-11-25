@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { createPost } from '../../lib/api/posts';
 import { QUERY_KEYS } from '../../lib/queryKeys';
 
@@ -12,17 +13,30 @@ export default function CreatePostForm() {
   const createPostMutation = useMutation({
     mutationFn: createPost,
     onSuccess: (post) => {
-      setMessage(`✅ Post #${post.id} created`);
+      setMessage(`✅ Post "${post.title}" created`);
       setTitle('');
       // the cached posts list is now old → mark it stale so it refetches
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.posts });
     },
-    onError: (err) => setMessage(`❌ Failed: ${err.message}`),
+    onError: (err) => {
+      const details = isAxiosError<{ errors?: unknown; message?: string }>(err)
+        ? err.response?.data
+        : undefined;
+      const errors = Array.isArray(details?.errors)
+        ? details.errors.filter((error) => typeof error === 'string')
+        : [];
+      setMessage(`❌ Failed: ${errors.join(' ') || details?.message || err.message}`);
+    },
   });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (title.trim()) createPostMutation.mutate(title.trim());
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
+      setMessage('Enter a post title.');
+      return;
+    }
+    createPostMutation.mutate(trimmedTitle);
   };
 
   return (
@@ -43,9 +57,6 @@ export default function CreatePostForm() {
         </button>
       </div>
       {message && <p className="text-sm">{message}</p>}
-      <p className="text-xs text-slate-500">
-        jsonplaceholder does not really save → always returns id 101. Watch the POST in the Network tab.
-      </p>
     </form>
   );
 }

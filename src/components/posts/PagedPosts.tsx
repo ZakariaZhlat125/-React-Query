@@ -2,22 +2,22 @@ import { useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchPostsPage } from '../../lib/api/posts';
 import { QUERY_KEYS } from '../../lib/queryKeys';
+import ErrorFallback from '../ErrorFallback';
 import PageLoader from '../PageLoader';
-
-const LAST_PAGE = 20; // 100 posts / 5 per page
 
 // Challenge: pagination. When `page` changes, the key changes → React Query fetches automatically.
 // No useEffect needed!
 export default function PagedPosts() {
   const [page, setPage] = useState(1);
 
-  const { data: posts, isLoading, isFetching, isPlaceholderData } = useQuery({
+  const { data, isLoading, isFetching, isPlaceholderData, error, refetch } = useQuery({
     queryKey: QUERY_KEYS.postsPage(page),
     queryFn: () => fetchPostsPage(page),
     placeholderData: keepPreviousData, // keep showing the old page while the next one loads
   });
 
   if (isLoading) return <PageLoader />;
+  if (error) return <ErrorFallback error={error} onRetry={refetch} />;
 
   return (
     <div className="space-y-3">
@@ -26,9 +26,8 @@ export default function PagedPosts() {
           isPlaceholderData ? 'opacity-50' : ''
         }`}
       >
-        {posts?.map((p) => (
-          <li key={p.id} className="px-4 py-2.5 text-sm">
-            <span className="mr-2 text-slate-400">{p.id}.</span>
+        {data?.data.map((p) => (
+          <li key={p._id} className="px-4 py-2.5 text-sm">
             {p.title}
           </li>
         ))}
@@ -47,7 +46,7 @@ export default function PagedPosts() {
         </span>
         <button
           onClick={() => setPage((p) => p + 1)}
-          disabled={page === LAST_PAGE}
+          disabled={isPlaceholderData || page >= (data?.meta.totalPages ?? 0)}
           className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm disabled:opacity-40"
         >
           Next

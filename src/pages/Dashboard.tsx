@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchPosts } from '../lib/api/posts';
-import { fetchTodos } from '../lib/api/todos';
 import { fetchUsers } from '../lib/api/users';
 import { QUERY_KEYS } from '../lib/queryKeys';
 import { useAuthStore } from '../store/authStore';
@@ -23,9 +22,10 @@ export default function Dashboard() {
 
   const users = useQuery({ queryKey: QUERY_KEYS.users, queryFn: fetchUsers });
   const posts = useQuery({ queryKey: QUERY_KEYS.posts, queryFn: () => fetchPosts(10) });
-  const todos = useQuery({ queryKey: QUERY_KEYS.todos, queryFn: fetchTodos });
+  // const todos = useQuery({ queryKey: QUERY_KEYS.todos, queryFn: fetchTodos });
 
-  const doneTodos = todos.data?.filter((t) => t.completed).length ?? 0;
+
+  // const doneTodos = todos.data?.filter((t) => t.completed).length ?? 0;
 
   return (
     <div className="space-y-6">
@@ -35,13 +35,13 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Users" value={users.data?.length ?? 0} loading={users.isLoading} />
+        <StatCard label="Users" value={users?.data?.data?.length ?? 0} loading={users.isLoading} />
         <StatCard label="Latest posts" value={posts.data?.length ?? 0} loading={posts.isLoading} />
-        <StatCard
+        {/* <StatCard
           label="Todos done"
           value={`${doneTodos} / ${todos.data?.length ?? 0}`}
           loading={todos.isLoading}
-        />
+        /> */}
       </div>
 
       <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-900">

@@ -8,7 +8,7 @@ export const QUERY_KEYS = {
 
   posts: ['posts'] as const,
   postsPage: (page: number) => ['posts', 'page', page] as const,
-  post: (id: number | null) => ['post', id] as const,
+  post: (id: string) => ['post', id] as const,
 
   todos: ['todos'] as const,
 };
